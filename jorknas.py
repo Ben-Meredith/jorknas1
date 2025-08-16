@@ -29,6 +29,9 @@ else:
 # Maps each filename to the username who uploaded it
 uploaders = {}
 
+# Map each filename to its S3 URL
+image_urls = {}
+
 # ----------------------------
 # AWS S3 CONFIGURATION
 # ----------------------------
@@ -44,9 +47,11 @@ def upload_file_to_s3(file):
         file,
         AWS_BUCKET_NAME,
         filename
+        # Removed ACL argument because bucket enforces owner
     )
     url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
     return url
+
 # ----------------------------
 # Login route
 # ----------------------------
@@ -89,8 +94,8 @@ def index():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    images = os.listdir(app.config['UPLOAD_FOLDER'])
-    for img in images:
+    # Initialize likes and uploaders for any new images
+    for img in image_urls.keys():
         if img not in likes_dict:
             likes_dict[img] = 0
         if img not in uploaders:
@@ -98,9 +103,10 @@ def index():
 
     return render_template(
         'index.html',
-        images=images,
+        images=list(image_urls.keys()),  # pass filenames
         likes_dict=likes_dict,
         uploaders=uploaders,
+        image_urls=image_urls,          # pass the S3 URLs
         current_user=session['username']
     )
 
@@ -118,10 +124,12 @@ def upload_file():
     if file.filename == '':
         return redirect(url_for('index'))
     if file:
-        # Upload to S3 instead of local folder
+        # Upload to S3
         image_url = upload_file_to_s3(file)
         likes_dict[file.filename] = 0
         uploaders[file.filename] = session['username']
+        image_urls[file.filename] = image_url  # store S3 URL
+
     return redirect(url_for('index'))
 
 # ----------------------------
