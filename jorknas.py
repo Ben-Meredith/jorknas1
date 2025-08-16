@@ -51,7 +51,17 @@ uploaders = {}
 
 # Map each filename to its S3 URL
 image_urls = {}
+POSTS_FILE = 'posts.json'
 
+posts_data = {}
+
+if os.path.exists(POSTS_FILE):
+    with open(POSTS_FILE, 'r') as f:
+        posts_data = json.load(f)
+        for filename, info in posts_data.items():
+            image_urls[filename] = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
+            uploaders[filename] = info.get('uploader', 'Unknown')
+            likes_dict[filename] = info.get('likes', 0)
 # ----------------------------
 # AWS S3 CONFIGURATION
 # ----------------------------
@@ -170,8 +180,15 @@ def upload_file():
         likes_dict[file.filename] = 0
         uploaders[file.filename] = session['username']
         image_urls[file.filename] = image_url  # store S3 URL
+        # Save uploader info and likes to posts.json
+        posts_data[file.filename] = {
+            "uploader": session['username'],
+            "likes": 0
+        }
+        with open(POSTS_FILE, 'w') as f:
+            json.dump(posts_data, f)
 
-    return redirect(url_for('index'))
+            return redirect(url_for('index'))
 
 # ----------------------------
 # Upload profile picture route
