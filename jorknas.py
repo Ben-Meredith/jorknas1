@@ -1,6 +1,8 @@
 from flask import Flask, request, redirect, url_for, render_template, jsonify, session
 import os
 import json  # For persistent users
+import boto3
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 # Use environment variable for secret key, fallback to hardcoded if not set
@@ -26,6 +28,32 @@ else:
 
 # Maps each filename to the username who uploaded it
 uploaders = {}
+
+# ----------------------------
+# AWS S3 CONFIGURATION
+# ----------------------------
+AWS_ACCESS_KEY_ID = "YOUR_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY = "YOUR_SECRET_ACCESS_KEY"
+AWS_BUCKET_NAME = "jorknas-images"
+AWS_REGION = "us-east-1"
+
+s3 = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    region_name=AWS_REGION
+)
+
+def upload_file_to_s3(file):
+    filename = secure_filename(file.filename)
+    s3.upload_fileobj(
+        file,
+        AWS_BUCKET_NAME,
+        filename,
+        ExtraArgs={"ACL": "public-read"}
+    )
+    url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
+    return url
 
 # ----------------------------
 # Login route
@@ -85,7 +113,7 @@ def index():
     )
 
 # ----------------------------
-# Upload route
+# Upload route (AWS S3)
 # ----------------------------
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -98,8 +126,8 @@ def upload_file():
     if file.filename == '':
         return redirect(url_for('index'))
     if file:
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(filepath)
+        # Upload to S3 instead of local folder
+        image_url = upload_file_to_s3(file)
         likes_dict[file.filename] = 0
         uploaders[file.filename] = session['username']
     return redirect(url_for('index'))
