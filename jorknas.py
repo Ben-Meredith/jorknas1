@@ -32,8 +32,8 @@ uploaders = {}
 # ----------------------------
 # AWS S3 CONFIGURATION
 # ----------------------------
-AWS_ACCESS_KEY_ID = "YOUR_ACCESS_KEY_ID"
-AWS_SECRET_ACCESS_KEY = "YOUR_SECRET_ACCESS_KEY"
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_BUCKET_NAME = "jorknas-images"
 AWS_REGION = "us-east-1"
 
