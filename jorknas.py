@@ -85,7 +85,11 @@ if os.path.exists(POSTS_FILE):
         posts_data = json.load(f)
         for filename, info in posts_data.items():
             image_urls[filename] = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
-            uploaders[filename] = info.get('uploader', 'Unknown')
+            uploader_name = info.get('uploader', 'Unknown')
+if uploader_name not in users:
+    # Create a placeholder user so the uploader exists
+    users[uploader_name] = {"password": "", "profile_pic": None}
+uploaders[filename] = uploader_name
             likes_dict[filename] = info.get('likes', 0)
 
 # ----------------------------
