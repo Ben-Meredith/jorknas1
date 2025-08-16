@@ -167,6 +167,28 @@ def upload_file():
     return redirect(url_for('index'))
 
 # ----------------------------
+# Upload profile picture route
+# ----------------------------
+@app.route('/upload_profile_pic', methods=['POST'])
+def upload_profile_pic():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    if 'file' not in request.files:
+        return redirect(url_for('index'))
+    file = request.files['file']
+    if file.filename == '':
+        return redirect(url_for('index'))
+    if file:
+        # Upload to S3
+        profile_pic_url = upload_file_to_s3(file)
+        # Save the URL in the user's data
+        users[session['username']]['profile_pic'] = profile_pic_url
+        save_users()
+
+    return redirect(url_for('index'))
+
+# ----------------------------
 # Like route
 # ----------------------------
 @app.route('/like/<filename>', methods=['POST'])
