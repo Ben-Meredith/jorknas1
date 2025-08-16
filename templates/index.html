@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Photo Feed</title>
+</head>
+<body>
+    <h1>Photo Feed</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Upload</button>
+    </form>
+
+    <div>
+        {% for img in images %}
+            <img src="{{ url_for('static', filename='uploads/' ~ img) }}" width="200">
+        {% endfor %}
+    </div>
+</body>
+</html>
