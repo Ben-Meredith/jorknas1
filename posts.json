@@ -1,1 +1,10 @@
-
+{
+  "old_image1.jpg": {
+    "uploader": "friend1",
+    "likes": 0
+  },
+  "old_image2.png": {
+    "uploader": "friend2",
+    "likes": 2
+  }
+}
