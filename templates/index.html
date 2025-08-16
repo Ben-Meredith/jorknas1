@@ -185,10 +185,9 @@ body {
 {% for img in images %}
 <div class="post">
     <div class="post-header">
-        <img src="https://via.placeholder.com/32" alt="pfp">
+        <img src="{{ profile_pics[uploaders[img]] or url_for('static', filename='default_profile.png') }}" alt="pfp">
         <span>{{ uploaders[img] }}</span>
     </div>
-    <!-- Only this line changed -->
     <img src="{{ image_urls[img] }}" />
     <div class="post-actions">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Instagram_like_icon.svg" alt="Like" class="like-btn" data-filename="{{ img }}">
