@@ -182,8 +182,14 @@ def upload_profile_pic():
     if file:
         # Upload to S3
         profile_pic_url = upload_file_to_s3(file)
-        # Save the URL in the user's data
-        users[session['username']]['profile_pic'] = profile_pic_url
+        username = session['username']
+
+        # Ensure user entry is a dict to avoid KeyError
+        if username not in users or isinstance(users[username], str):
+            users[username] = {"password": users.get(username, ""), "profile_pic": None}
+
+        # Save profile pic
+        users[username]['profile_pic'] = profile_pic_url
         save_users()
 
     return redirect(url_for('index'))
