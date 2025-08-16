@@ -1,19 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Photo Feed</title>
+<meta charset="UTF-8">
+<title>Jorknas</title>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Billabong&display=swap" rel="stylesheet">
+<style>
+/* Global Styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Roboto', sans-serif;
+    background: #121212;
+    color: #E4E6EB;
+}
+
+/* Navbar */
+.navbar {
+    height: 60px;
+    background: #1E1E1E;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.navbar .logo {
+    font-family: 'Billabong', cursive;
+    font-size: 32px;
+    color: #fff;
+}
+.navbar .search {
+    flex: 1;
+    text-align: center;
+}
+.navbar .search input {
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid #333;
+    width: 200px;
+    outline: none;
+    background-color: #2A2A2A;
+    color: #E4E6EB;
+}
+.navbar .icons span {
+    font-size: 24px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+/* Main Feed */
+.main { display: flex; justify-content: center; margin-top: 30px; }
+.feed { width: 470px; }
+
+/* Stories */
+.stories {
+    display: flex;
+    background: #1E1E1E;
+    border: 1px solid #333;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+.story {
+    flex: 0 0 auto;
+    text-align: center;
+    margin-right: 15px;
+}
+.story img {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    border: 2px solid #FF004F;
+}
+.story span { font-size: 12px; display: block; margin-top: 5px; color: #E4E6EB; }
+
+/* Upload Box */
+.upload-box {
+    background: #1E1E1E;
+    border: 1px solid #333;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    padding: 15px;
+    text-align: center;
+}
+.upload-box input[type="file"] {
+    width: 100%;
+    margin-bottom: 10px;
+    background: #2A2A2A;
+    color: #E4E6EB;
+}
+.upload-box button {
+    background: #0095f6;
+    border: none;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.upload-box button:hover { background: #007ac1; }
+
+/* Post */
+.post {
+    background: #1E1E1E;
+    border: 1px solid #333;
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+.post-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-weight: 500;
+    font-size: 14px;
+}
+.post-header img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.post img {
+    width: 100%;
+    display: block;
+}
+.post-actions {
+    padding: 8px 10px;
+    display: flex;
+    gap: 10px;
+}
+.post-actions img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+.post-footer {
+    padding: 0 10px 10px 10px;
+    font-size: 14px;
+}
+.likes { font-weight: bold; margin: 5px 0; }
+.comment { color: #ccc; font-size: 14px; }
+
+</style>
 </head>
 <body>
-    <h1>Photo Feed</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <button type="submit">Upload</button>
-    </form>
 
-    <div>
-        {% for img in images %}
-            <img src="{{ url_for('static', filename='uploads/' ~ img) }}" width="200">
-        {% endfor %}
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">Jorknas</div>
+    <div class="search"><input type="text" placeholder="Search"></div>
+    <div class="icons">
+        <span>🏠</span>
+        <span>🔍</span>
+        <span>❤️</span>
+        <span>✉️</span>
+        <a href="{{ url_for('logout') }}"><span>👤</span></a>
     </div>
+</div>
+
+<!-- Main Feed -->
+<div class="main">
+    <div class="feed">
+
+        <!-- Stories -->
+        <div class="stories">
+            <div class="story"><img src="https://via.placeholder.com/66" alt=""><span>friend1</span></div>
+            <div class="story"><img src="https://via.placeholder.com/66" alt=""><span>friend2</span></div>
+            <div class="story"><img src="https://via.placeholder.com/66" alt=""><span>friend3</span></div>
+        </div>
+
+        <!-- Upload Box -->
+        <div class="upload-box">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file"><br>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+
+        <!-- Posts -->
+        {% for img in images %}
+        <div class="post">
+            <div class="post-header">
+                <img src="https://via.placeholder.com/32" alt="pfp">
+                <span>{{ uploaders[img] }}</span>
+            </div>
+            <img src="{{ url_for('static', filename='uploads/' ~ img) }}" alt="Photo">
+            <div class="post-actions">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Instagram_like_icon.svg" alt="Like" class="like-btn" data-filename="{{ img }}">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Instagram_comment_icon.svg" alt="Comment">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Instagram_direct_message_icon.svg" alt="Send">
+            </div>
+            <div class="likes" id="likes-{{ img }}">{{ likes_dict[img] }} likes</div>
+            <div class="comment"><b>{{ uploaders[img] }}</b> Nice picture!</div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.like-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const filename = button.getAttribute('data-filename');
+        fetch(`/like/${filename}`, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.likes !== undefined) {
+                document.getElementById(`likes-${filename}`).textContent = data.likes + ' likes';
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>
