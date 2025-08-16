@@ -62,6 +62,19 @@ AWS_REGION = "us-east-2"
 s3 = boto3.client("s3", region_name=AWS_REGION)
 
 # ----------------------------
+# Upload file to S3 function (added)
+# ----------------------------
+def upload_file_to_s3(file):
+    filename = secure_filename(file.filename)
+    s3.upload_fileobj(
+        file,
+        AWS_BUCKET_NAME,
+        filename
+    )
+    url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
+    return url
+
+# ----------------------------
 # Load old posts from posts.json
 # ----------------------------
 POSTS_FILE = 'posts.json'
@@ -98,7 +111,6 @@ def load_existing_images_from_s3():
 # Call the function to populate existing images
 load_existing_images_from_s3()
 
-# ... rest of your code remains exactly the same ...
 # ----------------------------
 # Login route
 # ----------------------------
@@ -166,6 +178,7 @@ def index():
         current_user=session['username']
     )
 
+# ... rest of your code remains unchanged ...
 # ----------------------------
 # Upload route (AWS S3)
 # ----------------------------
