@@ -124,9 +124,9 @@ body {
 .post-header img {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
+    border-radius: 50%; /* keeps it perfectly circular */
+    object-fit: cover;   /* crops/resizes image to fill the circle without stretching */
     margin-right: 10px;
-    object-fit: cover;
 }
 .post img {
     width: 100%;
