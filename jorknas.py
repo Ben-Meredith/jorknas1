@@ -51,8 +51,20 @@ uploaders = {}
 
 # Map each filename to its S3 URL
 image_urls = {}
-POSTS_FILE = 'posts.json'
 
+# ----------------------------
+# AWS S3 CONFIGURATION
+# ----------------------------
+AWS_BUCKET_NAME = "jorknas-images"
+AWS_REGION = "us-east-2"
+
+# Boto3 will automatically read AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from environment variables
+s3 = boto3.client("s3", region_name=AWS_REGION)
+
+# ----------------------------
+# Load old posts from posts.json
+# ----------------------------
+POSTS_FILE = 'posts.json'
 posts_data = {}
 
 if os.path.exists(POSTS_FILE):
@@ -62,14 +74,6 @@ if os.path.exists(POSTS_FILE):
             image_urls[filename] = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
             uploaders[filename] = info.get('uploader', 'Unknown')
             likes_dict[filename] = info.get('likes', 0)
-# ----------------------------
-# AWS S3 CONFIGURATION
-# ----------------------------
-AWS_BUCKET_NAME = "jorknas-images"
-AWS_REGION = "us-east-2"
-
-# Boto3 will automatically read AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from environment variables
-s3 = boto3.client("s3", region_name=AWS_REGION)
 
 # ----------------------------
 # Load existing images from S3 on startup
@@ -94,6 +98,7 @@ def load_existing_images_from_s3():
 # Call the function to populate existing images
 load_existing_images_from_s3()
 
+# ... rest of your code remains exactly the same ...
 # ----------------------------
 # Login route
 # ----------------------------
