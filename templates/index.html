@@ -78,8 +78,8 @@ body {
 }
 .story span { font-size: 12px; display: block; margin-top: 5px; color: #E4E6EB; }
 
-/* Upload Box */
-.upload-box {
+/* Upload Boxes */
+.upload-box, .upload-profile-pic {
     background: #1E1E1E;
     border: 1px solid #333;
     border-radius: 3px;
@@ -87,13 +87,15 @@ body {
     padding: 15px;
     text-align: center;
 }
-.upload-box input[type="file"] {
+.upload-box input[type="file"],
+.upload-profile-pic input[type="file"] {
     width: 100%;
     margin-bottom: 10px;
     background: #2A2A2A;
     color: #E4E6EB;
 }
-.upload-box button {
+.upload-box button,
+.upload-profile-pic button {
     background: #0095f6;
     border: none;
     color: #fff;
@@ -102,7 +104,8 @@ body {
     cursor: pointer;
     font-weight: bold;
 }
-.upload-box button:hover { background: #007ac1; }
+.upload-box button:hover,
+.upload-profile-pic button:hover { background: #007ac1; }
 
 /* Post */
 .post {
@@ -173,7 +176,15 @@ body {
             <div class="story"><img src="https://via.placeholder.com/66" alt=""><span>friend3</span></div>
         </div>
 
-        <!-- Upload Box -->
+        <!-- Profile Pic Upload Box -->
+        <div class="upload-profile-pic">
+            <form action="/upload_profile_pic" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" required><br>
+                <button type="submit">Set Profile Picture</button>
+            </form>
+        </div>
+
+        <!-- Main Upload Box -->
         <div class="upload-box">
             <form action="/upload" method="post" enctype="multipart/form-data">
                 <input type="file" name="file"><br>
@@ -181,11 +192,11 @@ body {
             </form>
         </div>
 
-       <!-- Posts -->
+        <!-- Posts -->
 {% for img in images %}
 <div class="post">
     <div class="post-header">
-        <img src="{{ profile_pics[uploaders[img]] or url_for('static', filename='default_profile.png') }}" alt="pfp">
+        <img src="{{ profile_pics[uploaders[img]] }}" alt="pfp">
         <span>{{ uploaders[img] }}</span>
     </div>
     <img src="{{ image_urls[img] }}" />
