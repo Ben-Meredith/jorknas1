@@ -75,7 +75,7 @@ def upload_file_to_s3(file):
     return url
 
 # ----------------------------
-# Load old posts from posts.json
+# Load old posts from posts.json safely
 # ----------------------------
 POSTS_FILE = 'posts.json'
 posts_data = {}
@@ -91,14 +91,14 @@ if os.path.exists(POSTS_FILE):
 # Populate image_urls, uploaders, likes_dict
 for filename, info in posts_data.items():
     image_urls[filename] = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
-    
-    uploader_name = info.get('uploader', 'Unknown')
-    if uploader_name not in users:
-        users[uploader_name] = {"password": "", "profile_pic": None}
-    
-    uploaders[filename] = uploader_name
-    likes_dict[filename] = info.get('likes', 0)
 
+    uploader_name = info.get('uploader', 'Unknown')
+    # Only set uploader to Unknown if username is missing in users
+    if uploader_name not in users:
+        uploader_name = "Unknown"
+    uploaders[filename] = uploader_name
+
+    likes_dict[filename] = info.get('likes', 0)
 # ----------------------------
 # Load existing images from S3 on startup
 # ----------------------------
