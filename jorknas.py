@@ -32,17 +32,11 @@ uploaders = {}
 # ----------------------------
 # AWS S3 CONFIGURATION
 # ----------------------------
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_BUCKET_NAME = "jorknas-images"
 AWS_REGION = "us-east-1"
 
-s3 = boto3.client(
-    "s3",
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    region_name=AWS_REGION
-)
+# Boto3 will automatically read AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from environment variables
+s3 = boto3.client("s3", region_name=AWS_REGION)
 
 def upload_file_to_s3(file):
     filename = secure_filename(file.filename)
@@ -50,11 +44,10 @@ def upload_file_to_s3(file):
         file,
         AWS_BUCKET_NAME,
         filename,
-        ExtraArgs={"ACL": "public-read"}
+        ExtraArgs={"ACL": "public-read"}  # ensures the file is publicly accessible
     )
     url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
     return url
-
 # ----------------------------
 # Login route
 # ----------------------------
