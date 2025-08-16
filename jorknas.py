@@ -43,8 +43,7 @@ def upload_file_to_s3(file):
     s3.upload_fileobj(
         file,
         AWS_BUCKET_NAME,
-        filename,
-        ExtraArgs={"ACL": "public-read"}  # ensures the file is publicly accessible
+        filename
     )
     url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
     return url
