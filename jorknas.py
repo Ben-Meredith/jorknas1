@@ -17,14 +17,34 @@ likes_dict = {}
 # Persistent users
 USERS_FILE = 'users.json'
 
-if os.path.exists(USERS_FILE):
-    with open(USERS_FILE, 'r') as f:
-        try:
-            users = json.load(f)
-        except json.JSONDecodeError:
-            users = {}
-else:
-    users = {}
+def load_users():
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, 'r') as f:
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError:
+                data = {}
+    else:
+        data = {}
+    # Normalize legacy values (string passwords) to dicts with profile_pic
+    normalized = {}
+    for uname, val in data.items():
+        if isinstance(val, str):
+            normalized[uname] = {"password": val, "profile_pic": None}
+        elif isinstance(val, dict):
+            normalized[uname] = {
+                "password": val.get("password", ""),
+                "profile_pic": val.get("profile_pic")
+            }
+        else:
+            normalized[uname] = {"password": "", "profile_pic": None}
+    return normalized
+
+users = load_users()
+
+def save_users():
+    with open(USERS_FILE, 'w') as f:
+        json.dump(users, f)
 
 # Maps each filename to the username who uploaded it
 uploaders = {}
@@ -65,7 +85,10 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username in users and users[username] == password:
+        u = users.get(username)
+        # Support both legacy (string) and new (dict) formats
+        stored_pw = u if isinstance(u, str) else (u.get('password') if u else None)
+        if stored_pw and stored_pw == password:
             session['username'] = username
             return redirect(url_for('index'))
         else:
@@ -82,10 +105,9 @@ def signup():
         password = request.form['password']
         if username in users:
             return render_template('signup.html', error="Username already exists")
-        # Add user and save to JSON file
-        users[username] = password
-        with open(USERS_FILE, 'w') as f:
-            json.dump(users, f)
+        # Add user with new dict shape and save to JSON file
+        users[username] = {"password": password, "profile_pic": None}
+        save_users()
         # Auto-login
         session['username'] = username
         return redirect(url_for('index'))
@@ -115,6 +137,7 @@ def index():
         image_urls=image_urls,          # S3 URLs
         current_user=session['username']
     )
+
 # ----------------------------
 # Upload route (AWS S3)
 # ----------------------------
