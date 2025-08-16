@@ -128,13 +128,19 @@ def index():
         if img not in uploaders:
             uploaders[img] = "Unknown"
 
-    # Pass S3 URLs correctly to the template
+    # Build a mapping from each post to the uploader's profile pic
+    profile_pics = {}
+    for user, data in users.items():
+        profile_pics[user] = data.get("profile_pic", None)
+
+    # Pass S3 URLs and profile pics correctly to the template
     return render_template(
         'index.html',
         images=list(image_urls.keys()),  # pass filenames
         likes_dict=likes_dict,
         uploaders=uploaders,
         image_urls=image_urls,          # S3 URLs
+        profile_pics=profile_pics,      # profile pics
         current_user=session['username']
     )
 
