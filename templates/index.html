@@ -181,23 +181,24 @@ body {
             </form>
         </div>
 
-        <!-- Posts -->
-        {% for img in images %}
-        <div class="post">
-            <div class="post-header">
-                <img src="https://via.placeholder.com/32" alt="pfp">
-                <span>{{ uploaders[img] }}</span>
-            </div>
-            <img src="{{ image_urls[image] }}" />
-            <div class="post-actions">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Instagram_like_icon.svg" alt="Like" class="like-btn" data-filename="{{ img }}">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Instagram_comment_icon.svg" alt="Comment">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Instagram_direct_message_icon.svg" alt="Send">
-            </div>
-            <div class="likes" id="likes-{{ img }}">{{ likes_dict[img] }} likes</div>
-            <div class="comment"><b>{{ uploaders[img] }}</b> Nice picture!</div>
-        </div>
-        {% endfor %}
+       <!-- Posts -->
+{% for img in images %}
+<div class="post">
+    <div class="post-header">
+        <img src="https://via.placeholder.com/32" alt="pfp">
+        <span>{{ uploaders[img] }}</span>
+    </div>
+    <!-- Only this line changed -->
+    <img src="{{ image_urls[img] }}" />
+    <div class="post-actions">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Instagram_like_icon.svg" alt="Like" class="like-btn" data-filename="{{ img }}">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Instagram_comment_icon.svg" alt="Comment">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Instagram_direct_message_icon.svg" alt="Send">
+    </div>
+    <div class="likes" id="likes-{{ img }}">{{ likes_dict[img] }} likes</div>
+    <div class="comment"><b>{{ uploaders[img] }}</b> Nice picture!</div>
+</div>
+{% endfor %}
 
     </div>
 </div>
