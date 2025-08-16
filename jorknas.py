@@ -1,9 +1,10 @@
 from flask import Flask, request, redirect, url_for, render_template, jsonify, session
 import os
-import json  # Added for persistent users
+import json  # For persistent users
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'  # Needed for sessions
+# Use environment variable for secret key, fallback to hardcoded if not set
+app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey')
 
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -11,14 +12,15 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Global likes dictionary
 likes_dict = {}
 
-# ----------------------------
 # Persistent users
-# ----------------------------
 USERS_FILE = 'users.json'
 
 if os.path.exists(USERS_FILE):
     with open(USERS_FILE, 'r') as f:
-        users = json.load(f)
+        try:
+            users = json.load(f)
+        except json.JSONDecodeError:
+            users = {}
 else:
     users = {}
 
