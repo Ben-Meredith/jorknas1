@@ -101,15 +101,15 @@ def index():
         if img not in uploaders:
             uploaders[img] = "Unknown"
 
+    # Pass S3 URLs correctly to the template
     return render_template(
         'index.html',
         images=list(image_urls.keys()),  # pass filenames
         likes_dict=likes_dict,
         uploaders=uploaders,
-        image_urls=image_urls,          # pass the S3 URLs
+        image_urls=image_urls,          # S3 URLs
         current_user=session['username']
     )
-
 # ----------------------------
 # Upload route (AWS S3)
 # ----------------------------
