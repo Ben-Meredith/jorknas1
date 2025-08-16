@@ -196,7 +196,7 @@ body {
 {% for img in images %}
 <div class="post">
     <div class="post-header">
-        <img src="{{ profile_pics[uploaders[img]] }}" alt="pfp">
+        <img src="{{ profile_pics[uploaders[img]] or 'https://via.placeholder.com/32' }}" alt="pfp">
         <span>{{ uploaders[img] }}</span>
     </div>
     <img src="{{ image_urls[img] }}" />
