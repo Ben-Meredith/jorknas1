@@ -188,7 +188,7 @@ body {
                 <img src="https://via.placeholder.com/32" alt="pfp">
                 <span>{{ uploaders[img] }}</span>
             </div>
-            <img src="{{ url_for('static', filename='uploads/' ~ img) }}" alt="Photo">
+            <img src="{{ url_for('static', filename='uploads/' + img) }}" alt="Photo">
             <div class="post-actions">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Instagram_like_icon.svg" alt="Like" class="like-btn" data-filename="{{ img }}">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Instagram_comment_icon.svg" alt="Comment">
