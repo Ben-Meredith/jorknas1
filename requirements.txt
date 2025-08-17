@@ -5,5 +5,5 @@ MarkupSafe==3.0.2
 itsdangerous==2.2.0
 click==8.2.1
 blinker==1.9.0
-Pillow==9.4.0
+Pillow==9.3.0
 boto3
