@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages with {{ other_user }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .message-box { border: 1px solid #ddd; padding: 10px; margin: 5px; border-radius: 5px; }
+        .sent { background-color: #d1ffd1; text-align: right; }
+        .received { background-color: #f0f0f0; text-align: left; }
+        .send-form { margin-top: 20px; }
+        input[type="text"] { width: 80%; padding: 8px; }
+        button { padding: 8px 12px; }
+    </style>
+</head>
+<body>
+    <h2>Chat with {{ other_user }}</h2>
+
+    <!-- Loop through messages -->
+    {% for msg in messages %}
+        <div class="message-box {% if msg['sender'] == session['username'] %}sent{% else %}received{% endif %}">
+            <strong>{{ msg['sender'] }}:</strong> {{ msg['content'] }} <br>
+            <small>{{ msg['timestamp'] }}</small>
+        </div>
+    {% endfor %}
+
+    <!-- Send new message -->
+    <form method="POST" action="{{ url_for('send_message') }}" class="send-form">
+        <input type="hidden" name="receiver" value="{{ other_user }}">
+        <input type="text" name="content" placeholder="Type a message..." required>
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
