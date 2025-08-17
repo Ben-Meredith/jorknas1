@@ -3,6 +3,8 @@ import os
 import json  # For persistent users
 import boto3
 from werkzeug.utils import secure_filename
+from PIL import Image
+import io  # Added for in-memory image processing
 
 DEFAULT_PROFILE_PIC = "https://i.pinimg.com/236x/4d/2e/0a/4d2e0a694015f3d2f840873d01aa5fd4.jpg"
 
@@ -222,7 +224,7 @@ def upload_file():
             return redirect(url_for('index'))
 
 # ----------------------------
-# Upload profile picture route
+# Upload profile picture route (with auto square crop)
 # ----------------------------
 @app.route('/upload_profile_pic', methods=['POST'])
 def upload_profile_pic():
@@ -234,11 +236,34 @@ def upload_profile_pic():
     file = request.files['file']
     if file.filename == '':
         return redirect(url_for('index'))
-    if file:
-        # Upload to S3
-        profile_pic_url = upload_file_to_s3(file)
-        username = session['username']
 
+    if file:
+        # Open the uploaded image
+        img = Image.open(file)
+
+        # Make it square
+        width, height = img.size
+        min_side = min(width, height)
+        left = (width - min_side) / 2
+        top = (height - min_side) / 2
+        right = (width + min_side) / 2
+        bottom = (height + min_side) / 2
+        img = img.crop((left, top, right, bottom))
+
+        # Optional: resize to a standard size, e.g., 128x128
+        img = img.resize((128, 128))
+
+        # Save to in-memory file
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format='PNG')
+        img_bytes.seek(0)
+
+        # Upload to S3
+        filename = secure_filename(file.filename)
+        s3.upload_fileobj(img_bytes, AWS_BUCKET_NAME, filename)
+        profile_pic_url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
+
+        username = session['username']
         # Ensure user entry is a dict to avoid KeyError
         if username not in users or isinstance(users[username], str):
             users[username] = {"password": users.get(username, ""), "profile_pic": None}
