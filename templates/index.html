@@ -123,12 +123,12 @@ body {
     font-size: 14px;
 }
 .post-header img {
-    width: 32px;
-    height: 32px;
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50%;
     object-fit: cover;
-    display: block;   /* ensures object-fit works */
-    margin-right: 10px;
+    display: block;
+    flex-shrink: 0;
 }
 .post img {
     width: 100%;
