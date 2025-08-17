@@ -101,6 +101,7 @@ for filename, info in posts_data.items():
     uploaders[filename] = uploader_name
 
     likes_dict[filename] = info.get('likes', 0)
+
 # ----------------------------
 # Load existing images from S3 on startup
 # ----------------------------
@@ -178,7 +179,7 @@ def index():
     # Build a mapping from each post to the uploader's profile pic
     profile_pics = {}
     for user, data in users.items():
-        profile_pics[user] = data.get("profile_pic", None)
+        profile_pics[user] = data.get("profile_pic") if data.get("profile_pic") else DEFAULT_PROFILE_PIC
 
     # Pass S3 URLs and profile pics correctly to the template
     return render_template(
@@ -191,7 +192,6 @@ def index():
         current_user=session['username']
     )
 
-# ... rest of your code remains unchanged ...
 # ----------------------------
 # Upload route (AWS S3)
 # ----------------------------
