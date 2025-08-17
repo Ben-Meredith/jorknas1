@@ -197,9 +197,9 @@ body {
     </div>
     <img src="{{ image_urls[img] }}" />
     <div class="post-actions">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Instagram_like_icon.svg" alt="Like" class="like-btn" data-filename="{{ img }}">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Instagram_comment_icon.svg" alt="Comment">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Instagram_direct_message_icon.svg" alt="Send">
+        <button class="like-btn" data-filename="{{ img }}" style="background:none; border:none; font-size:22px; cursor:pointer;">❤️</button>
+        <button style="background:none; border:none; font-size:22px; cursor:pointer;">💬</button>
+        <button style="background:none; border:none; font-size:22px; cursor:pointer;">📩</button>
     </div>
     <div class="likes" id="likes-{{ img }}">{{ likes_dict[img] }} likes</div>
     <div class="comment"><b>{{ uploaders[img] }}</b> Nice picture!</div>
