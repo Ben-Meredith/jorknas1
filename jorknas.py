@@ -314,6 +314,17 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+@app.route('/messages')
+def messages_menu():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    current_user = session['username']
+    # List all users except current user
+    other_users = [u for u in users.keys() if u != current_user]
+
+    return render_template("messages_menu.html", other_users=other_users)
+
 # ✅ Send a message
 @app.route('/send_message', methods=['POST'])
 def send_message():
