@@ -5,6 +5,7 @@ import boto3
 from werkzeug.utils import secure_filename
 from PIL import Image
 import io  # Added for in-memory image processing
+from datetime import datetime
 
 DEFAULT_PROFILE_PIC = "https://i.pinimg.com/236x/4d/2e/0a/4d2e0a694015f3d2f840873d01aa5fd4.jpg"
 
@@ -291,6 +292,44 @@ def like_image(filename):
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
+
+# ✅ Send a message
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    sender = session['username']  # logged-in user
+    receiver = request.form['receiver']  # who to send to
+    content = request.form['content']    # the message
+
+    conn = get_db_connection()
+    conn.execute(
+        "INSERT INTO messages (sender, receiver, content) VALUES (?, ?, ?)",
+        (sender, receiver, content)
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('view_messages', username=receiver))
+
+
+# ✅ View messages with a specific user
+@app.route('/messages/<username>')
+def view_messages(username):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    current_user = session['username']
+
+    conn = get_db_connection()
+    messages = conn.execute(
+        "SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY timestamp",
+        (current_user, username, username, current_user)
+    ).fetchall()
+    conn.close()
+
+    return render_template("messages.html", messages=messages, other_user=username)
 
 # ----------------------------
 # Run app
