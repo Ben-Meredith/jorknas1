@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages</title>
+</head>
+<body>
+    <h1>Send a Message</h1>
+    <ul>
+        {% for user in other_users %}
+            <li>
+                <a href="{{ url_for('view_messages', username=user) }}">{{ user }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>
