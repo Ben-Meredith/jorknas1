@@ -75,6 +75,7 @@ body {
     height: 66px;
     border-radius: 50%;
     border: 2px solid #FF004F;
+    object-fit: cover;
 }
 .story span { font-size: 12px; display: block; margin-top: 5px; color: #E4E6EB; }
 
@@ -124,8 +125,8 @@ body {
 .post-header img {
     width: 32px;
     height: 32px;
-    border-radius: 50%; /* keeps it perfectly circular */
-    object-fit: cover;   /* crops/resizes image to fill the circle without stretching */
+    border-radius: 50%;
+    object-fit: cover;
     margin-right: 10px;
 }
 .post img {
@@ -197,7 +198,7 @@ body {
 {% for img in images %}
 <div class="post">
     <div class="post-header">
-        <img src="{{ profile_pics[uploaders[img]] or 'https://via.placeholder.com/32' }}" alt="pfp">
+        <img src="{{ profile_pics[uploaders[img]] or 'https://i.pinimg.com/236x/4d/2e/0a/4d2e0a694015f3d2f840873d01aa5fd4.jpg' }}" alt="pfp">
         <span>{{ uploaders[img] }}</span>
     </div>
     <img src="{{ image_urls[img] }}" />
