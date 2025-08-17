@@ -14,6 +14,19 @@ def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row  # so you can access columns by name
     return conn
+def init_db():
+    conn = get_db_connection()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sender TEXT NOT NULL,
+            receiver TEXT NOT NULL,
+            content TEXT NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
     
 DEFAULT_PROFILE_PIC = "https://i.pinimg.com/236x/4d/2e/0a/4d2e0a694015f3d2f840873d01aa5fd4.jpg"
 
@@ -343,5 +356,6 @@ def view_messages(username):
 # Run app
 # ----------------------------
 if __name__ == '__main__':
+    init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
