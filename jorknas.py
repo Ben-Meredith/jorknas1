@@ -6,7 +6,15 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 import io  # Added for in-memory image processing
 from datetime import datetime
+import sqlite3
 
+DATABASE = 'messages.db'  # change to your database file if different
+
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row  # so you can access columns by name
+    return conn
+    
 DEFAULT_PROFILE_PIC = "https://i.pinimg.com/236x/4d/2e/0a/4d2e0a694015f3d2f840873d01aa5fd4.jpg"
 
 app = Flask(__name__)
