@@ -4,6 +4,8 @@ import json  # For persistent users
 import boto3
 from werkzeug.utils import secure_filename
 
+DEFAULT_PROFILE_PIC = "https://i.pinimg.com/236x/4d/2e/0a/4d2e0a694015f3d2f840873d01aa5fd4.jpg"
+
 app = Flask(__name__)
 # Use environment variable for secret key, fallback to hardcoded if not set
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey')
