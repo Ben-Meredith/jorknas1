@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# Upgrade pip to latest
+# Upgrade pip
 pip install --upgrade pip
 
-# Install Python dependencies from requirements.txt
+# Install dependencies, forcing prebuilt wheels
 pip install --only-binary=:all: -r requirements.txt
