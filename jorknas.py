@@ -43,6 +43,9 @@ likes_dict = {}
 # Persistent users
 USERS_FILE = 'users.json'
 
+# ----------------------------
+# Fixed load_users() and save_users()
+# ----------------------------
 def load_users():
     if os.path.exists(USERS_FILE):
         with open(USERS_FILE, 'r') as f:
@@ -52,25 +55,38 @@ def load_users():
                 data = {}
     else:
         data = {}
-    # Normalize legacy values (string passwords) to dicts with profile_pic
-    normalized = {}
+
+    # Make sure every entry is a proper dict with password and profile_pic
     for uname, val in data.items():
-        if isinstance(val, str):
-            normalized[uname] = {"password": val, "profile_pic": None}
+        if isinstance(val, str):  # legacy password-only format
+            data[uname] = {"password": val, "profile_pic": None}
         elif isinstance(val, dict):
-            normalized[uname] = {
-                "password": val.get("password", ""),
-                "profile_pic": val.get("profile_pic")
-            }
+            data[uname]["password"] = val.get("password", "")
+            data[uname]["profile_pic"] = val.get("profile_pic", None)
         else:
-            normalized[uname] = {"password": "", "profile_pic": None}
-    return normalized
+            data[uname] = {"password": "", "profile_pic": None}
+
+    return data
 
 users = load_users()
 
 def save_users():
+    # Always read the latest users before writing
+    if os.path.exists(USERS_FILE):
+        try:
+            with open(USERS_FILE, 'r') as f:
+                existing = json.load(f)
+        except:
+            existing = {}
+    else:
+        existing = {}
+
+    # Merge in-memory `users` into existing to prevent overwriting
+    for uname, info in users.items():
+        existing[uname] = info
+
     with open(USERS_FILE, 'w') as f:
-        json.dump(users, f)
+        json.dump(existing, f, indent=4)
 
 # Maps each filename to the username who uploaded it
 uploaders = {}
