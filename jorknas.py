@@ -8,6 +8,8 @@ import io  # Added for in-memory image processing
 from datetime import datetime
 import sqlite3
 
+ADMIN_USERNAME = "goat"
+app = Flask(__name__)
 DATABASE = 'messages.db'  # change to your database file if different
 
 def get_db_connection():
