@@ -167,6 +167,31 @@ def load_existing_images_from_s3():
 # Call the function to populate existing images
 load_existing_images_from_s3()
 
+@app.route('/delete_post/<filename>', methods=['POST'])
+def delete_post(filename):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    if session['username'] != ADMIN_USERNAME:
+        return "Unauthorized", 403
+
+    # Remove post from memory
+    likes_dict.pop(filename, None)
+    uploaders.pop(filename, None)
+    image_urls.pop(filename, None)
+    posts_data.pop(filename, None)
+
+    # Update posts.json
+    with open(POSTS_FILE, 'w') as f:
+        json.dump(posts_data, f)
+
+    # Delete from S3
+    try:
+        s3.delete_object(Bucket=AWS_BUCKET_NAME, Key=filename)
+    except Exception as e:
+        print("Error deleting from S3:", e)
+
+    return redirect(url_for('index'))
 # ----------------------------
 # Login route
 # ----------------------------
