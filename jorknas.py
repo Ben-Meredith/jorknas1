@@ -406,6 +406,31 @@ def view_messages(username):
 
     return render_template("messages.html", messages=messages, other_user=username)
 
+
+@app.route('/delete_post/<filename>', methods=['POST'])
+def delete_post(filename):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    # Only allow admin to delete
+    if session['username'] != 'goat':
+        return "Unauthorized", 403
+
+    # Remove from posts_data.json
+    if filename in posts_data:
+        del posts_data[filename]
+        with open(POSTS_FILE, 'w') as f:
+            json.dump(posts_data, f)
+
+    # Remove from in-memory dicts
+    if filename in image_urls:
+        del image_urls[filename]
+    if filename in uploaders:
+        del uploaders[filename]
+    if filename in likes_dict:
+        del likes_dict[filename]
+
+    return redirect(url_for('index'))
 # ----------------------------
 # Run app
 # ----------------------------
