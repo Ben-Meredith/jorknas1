@@ -73,22 +73,9 @@ def load_users():
 users = load_users()
 
 def save_users():
-    # Always read the latest users before writing
-    if os.path.exists(USERS_FILE):
-        try:
-            with open(USERS_FILE, 'r') as f:
-                existing = json.load(f)
-        except:
-            existing = {}
-    else:
-        existing = {}
-
-    # Merge in-memory `users` into existing to prevent overwriting
-    for uname, info in users.items():
-        existing[uname] = info
-
+    # Simply overwrite the JSON file with the current users dict
     with open(USERS_FILE, 'w') as f:
-        json.dump(existing, f, indent=4)
+        json.dump(users, f, indent=4)
 
 # Maps each filename to the username who uploaded it
 uploaders = {}
